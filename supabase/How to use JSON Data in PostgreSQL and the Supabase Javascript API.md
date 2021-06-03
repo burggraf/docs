@@ -131,7 +131,7 @@ While the above fields look identical, they're actually two different data types
 
 Insert data into the table:
 
-```sql
+```js
 const { data, error } = await supabase
 .from('game_log')
 .insert([{ 
@@ -187,7 +187,7 @@ Results:
 
 Select the winning pitcher from the JSONB field:
 
-```sql
+```js
 const { data, error } = await supabase
 .from('game_log')
 .select('game_data->winning_pitcher');
@@ -196,7 +196,7 @@ console.log(JSON.stringify(data,null,2));
 
 Results:
 
-```sql
+```js
 [
   {
     "winning_pitcher": "Alzolay"
@@ -206,7 +206,7 @@ Results:
 
 Get the final scores:
 
-```sql
+```js
 const { data, error } = await supabase
 .from('game_log')
 .select('visiting_team, visitors_runs:game_data->final_score->visitors->runs, home_team, home_runs:game_data->final_score->home->runs');
@@ -215,13 +215,33 @@ console.log(JSON.stringify(data,null,2));
 
 Results:
 
-```sql
+```js
 [
   {
     "visiting_team": "San Diego Padres",
     "visitors_runs": 1,
     "home_team": "Chicago Cubs",
     "home_runs": 6
+  }
+]
+```
+
+How many runs did the home team score in the 7th inning? (Note that data is stored in a zero-based array, so to get data from the 7th inning, we use a 6):
+
+```js
+const { data, error } = await this.supabase
+.from('game_log')
+.select('home_team, seventh_inning_runs:game_data->innings->home->6');
+console.log(JSON.stringify(data,null,2));
+```
+
+Results:
+
+```js
+[
+  {
+    "home_team": "Chicago Cubs",
+    "seventh_inning_runs": 3
   }
 ]
 ```
